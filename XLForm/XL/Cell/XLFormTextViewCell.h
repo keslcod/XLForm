@@ -27,9 +27,15 @@
 #import "XLFormBaseCell.h"
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, XLFormTextViewCellLayoutDirection) {
+    XLFormTextViewCellLayoutDirectionHorizontal = 0, // default, [label][textView]
+    XLFormTextViewCellLayoutDirectionVertical
+};
+
 @interface XLFormTextViewCell : XLFormBaseCell
 
 @property (nonatomic, readonly) UILabel * label;
 @property (nonatomic, readonly) XLFormTextView * textView;
+@property (nonatomic, assign) XLFormTextViewCellLayoutDirection layoutDirection;
 
 @end

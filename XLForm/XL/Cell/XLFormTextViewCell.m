@@ -37,7 +37,8 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
 
 @implementation XLFormTextViewCell
 {
-    NSArray * _dynamicCustomConstraints;
+    NSArray * _horizontalConstraints;
+	NSArray * _verticalConstraints;
 }
 
 @synthesize label = _label;
@@ -55,6 +56,16 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
 -(void)dealloc
 {
     [self.label removeObserver:self forKeyPath:@"text"];
+}
+
+-(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString*)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self){
+		_layoutDirection = XLFormTextViewCellLayoutDirectionHorizontal;
+    }
+
+    return self;
 }
 
 
@@ -81,14 +92,11 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
 -(void)configure
 {
     [super configure];
+
     [self setSelectionStyle:UITableViewCellSelectionStyleNone];
     [self.contentView addSubview:self.label];
     [self.contentView addSubview:self.textView];
     [self.label addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:0];
-    NSDictionary * views = @{@"label": self.label, @"textView": self.textView};
-    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-8-[label]" options:0 metrics:0 views:views]];
-    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
-    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
 }
 
 -(void)update
@@ -104,11 +112,13 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
     self.textView.textColor  = self.rowDescriptor.disabled ? [UIColor grayColor] : [UIColor blackColor];
     self.label.textColor = self.rowDescriptor.disabled ? [UIColor grayColor] : [UIColor blackColor];
     self.label.text = ((self.rowDescriptor.required && self.rowDescriptor.title && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle) ? [NSString stringWithFormat:@"%@*", self.rowDescriptor.title]: self.rowDescriptor.title);
+
+	[self setNeedsUpdateConstraints];
 }
 
 +(CGFloat)formDescriptorCellHeightForRowDescriptor:(XLFormRowDescriptor *)rowDescriptor
 {
-    return 110.f;
+    return 140.f;
 }
 
 -(BOOL)formDescriptorCellBecomeFirstResponder
@@ -125,17 +135,50 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
 
 -(void)updateConstraints
 {
-    if (_dynamicCustomConstraints){
-        [self.contentView removeConstraints:_dynamicCustomConstraints];
+	NSDictionary * views = @{@"label": self.label, @"textView": self.textView};
+
+	if (_verticalConstraints){
+		[self.contentView removeConstraints:_verticalConstraints];
+	}
+
+	NSMutableArray* verticalConstraints = [NSMutableArray array];
+
+	switch (self.layoutDirection){
+		case XLFormTextViewCellLayoutDirectionHorizontal:
+			[verticalConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-8-[label]" options:0 metrics:0 views:views]];
+			[verticalConstraints addObject:[NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+			[verticalConstraints addObject:[NSLayoutConstraint constraintWithItem:self.textView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+			break;
+		case XLFormTextViewCellLayoutDirectionVertical:
+			[verticalConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-8-[label]-0-[textView]-0-|" options:0 metrics:nil views:views]];
+	}
+
+	_verticalConstraints = verticalConstraints;
+	[self.contentView addConstraints:_verticalConstraints];
+
+    if (_horizontalConstraints){
+        [self.contentView removeConstraints:_horizontalConstraints];
     }
-    NSDictionary * views = @{@"label": self.label, @"textView": self.textView};
-    if (!self.label.text || [self.label.text isEqualToString:@""]){
-        _dynamicCustomConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[textView]-16-|" options:0 metrics:0 views:views];
-    }
-    else{
-        _dynamicCustomConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[label]-[textView]-4-|" options:0 metrics:0 views:views];
-    }
-    [self.contentView addConstraints:_dynamicCustomConstraints];
+
+	BOOL labelEmpty = (!self.label.text || [self.label.text isEqualToString:@""]);
+	switch (self.layoutDirection){
+		case XLFormTextViewCellLayoutDirectionHorizontal:
+			if (labelEmpty){
+				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[textView]-16-|" options:0 metrics:0 views:views];
+			}
+			else{
+				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[label]-[textView]-4-|" options:0 metrics:0 views:views];
+			}
+			break;
+		case XLFormTextViewCellLayoutDirectionVertical:{
+			NSArray* labelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[label]-16-|" options:0 metrics:0 views:views];
+			NSArray* textViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[textView]-16-|" options:0 metrics:0 views:views];
+			_horizontalConstraints = [labelConstraints arrayByAddingObjectsFromArray:textViewConstraints];
+			break;
+		}
+	}
+
+    [self.contentView addConstraints:_horizontalConstraints];
     [super updateConstraints];
 }
 
