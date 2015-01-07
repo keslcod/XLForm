@@ -28,9 +28,6 @@
 #import "XLFormRowDescriptor.h"
 
 @interface XLFormStepCounterCell ()
-
-@property (strong,nonatomic) UIColor *defaultTintColor;
-
 @end
 
 @implementation XLFormStepCounterCell
@@ -63,6 +60,7 @@
     currentStepValue.textAlignment = NSTextAlignmentCenter;
     currentStepValue.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     currentStepValue.textColor = self.defaultTintColor;
+	self.stepperValueLabel = currentStepValue;
 
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(0,
                                                                  0,
@@ -99,23 +97,12 @@
     return nil;
 }
 
-- (UILabel *)currentStepValue
-{
-    for (UIView *view in self.accessoryView.subviews) {
-        if ([view isMemberOfClass:[UILabel class]]) {
-            return (UILabel *)view;
-        }
-    }
-    
-    return nil;
-}
-
 - (void)valueChanged:(id)sender
 {
     UIStepper *stepper = self.stepControl;
     
     self.rowDescriptor.value = stepper.value == 0 ? nil : @(stepper.value);
-    self.currentStepValue.text = stepper.value == 0 ? nil : [NSString stringWithFormat:@"%.f", stepper.value];
+    self.stepperValueLabel.text = stepper.value == 0 ? nil : [NSString stringWithFormat:@"%.f", stepper.value];
 }
 
 

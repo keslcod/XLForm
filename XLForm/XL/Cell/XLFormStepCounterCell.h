@@ -28,4 +28,7 @@
 
 @interface XLFormStepCounterCell : XLFormBaseCell
 
+@property (strong,nonatomic) UIColor *defaultTintColor;
+@property (strong,nonatomic) UILabel *stepperValueLabel;
+
 @end
