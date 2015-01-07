@@ -180,7 +180,7 @@
     
     if (self.required) {
         // do required validation here
-        if (self.value == nil) { // || value.length() == 0
+        if (self.value == nil || self.value == [NSNull null]) { // || value.length() == 0
             valStatus.isValid = NO;
             NSString *msg = nil;
             if (self.requireMsg != nil) {
