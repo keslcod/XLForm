@@ -32,4 +32,7 @@
 @property (nonatomic, readonly) UILabel * textLabel;
 @property (nonatomic, readonly) UITextField * textField;
 
+// Subclasses only. You should not mess with this
+@property NSArray * dynamicCustomConstraints;
+
 @end

@@ -30,9 +30,6 @@
 #import "XLFormTextFieldCell.h"
 
 @interface XLFormTextFieldCell() <UITextFieldDelegate>
-
-@property NSArray * dynamicCustomConstraints;
-
 @end
 
 @implementation XLFormTextFieldCell
