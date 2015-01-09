@@ -40,4 +40,7 @@ typedef NS_ENUM(NSUInteger, XLFormDateDatePickerMode) {
 @property (nonatomic) NSDate *maximumDate;
 @property (nonatomic) NSInteger minuteInterval;
 
+/// Default is `NO`, labels will be baseline aligned but look wrong when in a mixed form with y centered cells
+@property (nonatomic) BOOL centerLabels;
+
 @end

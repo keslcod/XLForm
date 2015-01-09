@@ -94,7 +94,17 @@
     self.detailTextLabel.text = [self valueDisplayText];
     self.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     self.detailTextLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    if (self.centerLabels){
+        CGPoint titleCenter = self.textLabel.center;
+        titleCenter.y = self.detailTextLabel.center.y;
+        self.textLabel.center = titleCenter;
+    }
 }
 
 -(void)formDescriptorCellDidSelectedWithFormController:(XLFormViewController *)controller
