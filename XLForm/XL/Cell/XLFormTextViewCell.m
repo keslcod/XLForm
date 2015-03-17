@@ -164,15 +164,15 @@ NSString *const kFormTextViewCellPlaceholder = @"placeholder";
 	switch (self.layoutDirection){
 		case XLFormTextViewCellLayoutDirectionHorizontal:
 			if (labelEmpty){
-				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[textView]-16-|" options:0 metrics:0 views:views];
+				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[textView]-16-|" options:0 metrics:0 views:views];
 			}
 			else{
-				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[label]-[textView]-4-|" options:0 metrics:0 views:views];
+				_horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[label]-[textView]-16-|" options:0 metrics:0 views:views];
 			}
 			break;
 		case XLFormTextViewCellLayoutDirectionVertical:{
-			NSArray* labelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[label]-16-|" options:0 metrics:0 views:views];
-			NSArray* textViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-16-[textView]-16-|" options:0 metrics:0 views:views];
+			NSArray* labelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[label]-16-|" options:0 metrics:0 views:views];
+			NSArray* textViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[textView]-16-|" options:0 metrics:0 views:views];
 			_horizontalConstraints = [labelConstraints arrayByAddingObjectsFromArray:textViewConstraints];
 			break;
 		}
