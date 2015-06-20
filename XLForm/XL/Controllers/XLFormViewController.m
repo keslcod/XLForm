@@ -343,21 +343,20 @@
     if (cell){
         NSDictionary *keyboardInfo = [notification userInfo];
         CGRect keyboardFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        CGFloat keyboardHeight = CGRectGetHeight(keyboardFrame);
-        if (keyboardHeight > 0){
-            UIEdgeInsets tableContentInset = self.tableView.contentInset;
-            UIEdgeInsets tableScrollIndicatorInsets = self.tableView.scrollIndicatorInsets;
-            tableContentInset.bottom += keyboardHeight;
-            tableScrollIndicatorInsets.bottom = tableContentInset.bottom;
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
-            [UIView setAnimationCurve:[keyboardInfo[UIKeyboardAnimationCurveUserInfoKey] intValue]];
-            self.tableView.contentInset = tableContentInset;
-            self.tableView.scrollIndicatorInsets = tableScrollIndicatorInsets;
-            NSIndexPath *selectedRow = [self.tableView indexPathForCell:cell];
-            [self.tableView scrollToRowAtIndexPath:selectedRow atScrollPosition:UITableViewScrollPositionNone animated:NO];
-            [UIView commitAnimations];
-        }
+        CGRect previousKeyboardFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+        CGFloat keyboardDelta = CGRectGetMaxY(previousKeyboardFrame) - CGRectGetMaxY(keyboardFrame);
+        UIEdgeInsets tableContentInset = self.tableView.contentInset;
+        UIEdgeInsets tableScrollIndicatorInsets = self.tableView.scrollIndicatorInsets;
+        tableContentInset.bottom += keyboardDelta;
+        tableScrollIndicatorInsets.bottom = tableContentInset.bottom;
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+        [UIView setAnimationCurve:[keyboardInfo[UIKeyboardAnimationCurveUserInfoKey] intValue]];
+        self.tableView.contentInset = tableContentInset;
+        self.tableView.scrollIndicatorInsets = tableScrollIndicatorInsets;
+        NSIndexPath *selectedRow = [self.tableView indexPathForCell:cell];
+        [self.tableView scrollToRowAtIndexPath:selectedRow atScrollPosition:UITableViewScrollPositionNone animated:NO];
+        [UIView commitAnimations];
     }
 }
 
